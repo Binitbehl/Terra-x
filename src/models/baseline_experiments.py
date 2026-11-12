@@ -152,3 +152,51 @@ for name, feats in sets.items():
     out[name] = {k: mae(te["target"], fit_delta(tr, te, feats)) for k, (tr, te) in exps.items()}
 print("\nAblation (MAE, ug/m3; delta target, absolute-error loss):")
 print(pd.DataFrame(out).T.to_string())
+
+# ---------- horizons + day-level bootstrap ----------
+FC = [c + "_fc" for c in wx_cols]
+FEATS_H = HIST + WX + FC
+
+
+def build_h(h):
+    z = pd.concat([
+        long(wide, "pm_today"),
+        long(wide.shift(1), "pm_lag1"),
+        long(wide.rolling(7, min_periods=4).mean(), "pm_mean7"),
+        long(wide.shift(-h), "target"),
+    ], axis=1).reset_index()
+    z = z.merge(wx.reset_index(), on="date")
+    z = z.merge(wx.shift(-h).add_suffix("_fc").reset_index(), on="date")
+    z["year"] = z["date"].dt.year
+    z["month"] = z["date"].dt.month
+    return z.dropna(subset=["target", "pm_today"]).reset_index(drop=True)
+
+
+def day_bootstrap(test, pred, n=1000, seed=0):
+    y = test["target"].to_numpy()
+    diff = np.abs(y - pred) - np.abs(y - test["pm_today"].to_numpy())  # <0: model better
+    daily = pd.Series(diff).groupby(test["date"].to_numpy()).mean().to_numpy()
+    rng = np.random.default_rng(seed)
+    boots = [rng.choice(daily, len(daily)).mean() for _ in range(n)]
+    lo, hi = np.percentile(boots, [2.5, 97.5])
+    return round(daily.mean(), 2), round(lo, 2), round(hi, 2)
+
+
+rows = []
+for h in (1, 2, 3):
+    dh = build_h(h)
+    tr_all = dh[(dh.year == 2022) & (dh.month <= 10)]
+    tr_sh = tr_all[tr_all.location_id.isin(shared)]
+    t = dh[dh.year == 2025]
+    for name, (tr, te) in {
+        "1 period": (tr_sh, t[(t.month <= 10) & t.location_id.isin(shared)]),
+        "3 place+period": (tr_all, t[(t.month <= 10) & t.location_id.isin(new25)]),
+    }.items():
+        p = fit_delta(tr, te, FEATS_H)
+        d_mean, lo, hi = day_bootstrap(te, p)
+        rows.append({"horizon_days": h, "experiment": name,
+                     "persistence": mae(te["target"], te["pm_today"]),
+                     "model": mae(te["target"], p),
+                     "model_minus_persist": d_mean, "ci95_low": lo, "ci95_high": hi})
+print("\nHorizons and 95% bootstrap CI of (model error - persistence error); negative = model better:")
+print(pd.DataFrame(rows).to_string(index=False))
