@@ -35,3 +35,9 @@
 - BLH max falls from +0.43 (all days) to +0.25 (dry days): rain/cloud confounding
   explained most of the unexpected positive sign. Residual not significant.
 - Conclusion: in this month, wind is the only reliable meteorological signal.
+
+## Finding 5: OpenAQ station coverage (Delhi box)
+- Jan-Oct 2022: 39-44 stations. Nov 2022-2024: 1-2 stations. 2025: 51-53.
+- Citywide median is not comparable across years; track n_sensors.
+- Cause unknown (data gap vs ingestion/sensor-ID change).
+- Design consequence: period-shift test 2022 -> 2025, restricted to Jan-Oct.
