@@ -51,8 +51,10 @@
 - Limitations: one weather point, perfect next-day weather assumed, one training year, no confidence intervals, no 2023-2024 data.
 - Next: absolute-error loss, feature ablation, longer horizons, stations without history.
 
-## Finding 7: Why the model loses to persistence across years
-- Stale-value share <= 1% in all years: not a data artefact.
-- Persistence MAE 29.2 (2022) vs 17.3 (2025), levels 86.6 vs 61.2: 2022 is higher and noisier.
-- Delta target improves over level target in all experiments but does not beat persistence.
-- Next: absolute-error loss and feature ablation; one-day horizon may simply favour persistence.
+## Finding 7: What helps beat persistence (ablation, absolute-error loss, delta target)
+- Autocorrelation of PM2.5 (today vs tomorrow): 0.68 in 2022, 0.80 in 2025. Yesterday is less informative in 2022, so a 2022-trained model underuses it.
+- Absolute-error loss (matches MAE) beats squared error: 19.8 -> 16.8 (unseen period), 17.5 -> 15.7 (place + period).
+- Only next-day weather helps consistently: MAE 16.8 vs persistence 17.7 (unseen period), 15.4 vs 16.0 (place + period); same-day weather adds ~0.
+- Unseen season (Nov 2025): history or season features alone are far worse than persistence (72.7, 91.4 vs 39.6); next-day weather repairs most of it (41.5). Hypothesis: mean reversion learned in 2022 fails in sustained November episodes.
+- Lat/lon does not help on unseen stations (15.7 vs 15.4): no spatial information beyond coordinates.
+- Caveats: gains are ~4-5%, one split, no confidence intervals; next-day weather assumes a perfect forecast.
