@@ -58,3 +58,16 @@
 - Unseen season (Nov 2025): history or season features alone are far worse than persistence (72.7, 91.4 vs 39.6); next-day weather repairs most of it (41.5). Hypothesis: mean reversion learned in 2022 fails in sustained November episodes.
 - Lat/lon does not help on unseen stations (15.7 vs 15.4): no spatial information beyond coordinates.
 - Caveats: gains are ~4-5%, one split, no confidence intervals; next-day weather assumes a perfect forecast.
+
+## Finding 8: Gain over persistence by forecast horizon (95% bootstrap CI, days resampled)
+- Persistence MAE (unseen period): 17.7 (1 day), 22.4 (2 days), 24.5 (3 days).
+- Model (history + weather + target-day weather, delta target, absolute-error loss) vs persistence, day-averaged difference:
+  - 1 day: -1.86 [-3.16, -0.51] (unseen period); -0.59 [-2.23, +0.86] (place + period)
+  - 2 days: -1.21 [-3.16, +0.61]; -1.00 [-3.15, +0.87]
+  - 3 days: -4.00 [-6.45, -1.74]; -2.39 [-5.18, +0.10]
+- Reliable gains: 3-day unseen period (24.5 -> 21.8 MAE) and, narrowly, 1-day unseen period.
+- Place + period tests (14 stations) are inconclusive at every horizon.
+- Gain does not grow monotonically (2-day smaller than 1-day).
+- Caveats: target-day weather is actual weather (upper bound); bootstrap ignores
+  day-to-day correlation so intervals are likely narrow; six comparisons, no correction;
+  MAE columns are station-day averages while intervals are day-averaged.
