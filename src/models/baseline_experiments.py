@@ -15,7 +15,7 @@ wide.index.name = "date"
 wx_cols = ["temp_c", "rh", "wind_speed", "pressure_hpa", "precip_mm"]
 wx = pd.read_csv("data/processed/weather_daily_delhi_2022_2025.csv",
                  parse_dates=["date"], index_col="date")[wx_cols]
-wx_next = wx.shift(-1).add_suffix("_next")   # next-day weather (assumes a weather forecast)
+wx_next = wx.shift(-1).add_suffix("_next")   # next-day weather (assumes a forecast)
 
 
 def long(frame, name):
@@ -32,8 +32,8 @@ d = pd.concat([
 ], axis=1).reset_index()
 d = d.merge(wx.reset_index(), on="date").merge(wx_next.reset_index(), on="date")
 d = d.merge(coords, on="location_id")
-d["doy_sin"] = np.sin(2 * np.pi * d["date"].dt.dayofyear / 365.25)
-d["doy_cos"] = np.cos(2 * np.pi * d["date"].dt.dayofyear / 365.25)
+d["doy_sin"] = np.sin(2 * np.pi * d["date"].dt.day_of_year / 365.25)
+d["doy_cos"] = np.cos(2 * np.pi * d["date"].dt.day_of_year / 365.25)
 d["year"] = d["date"].dt.year
 d["month"] = d["date"].dt.month
 d = d.dropna(subset=["target", "pm_today"]).reset_index(drop=True)
@@ -43,15 +43,18 @@ FEATURES = (["pm_today", "pm_lag1", "pm_mean7"] + wx_cols
 
 
 def predict_all(train, test):
-    m = HistGradientBoostingRegressor(max_iter=300, learning_rate=0.05, random_state=0)
-    m.fit(train[FEATURES], train["target"])
+    kw = dict(max_iter=300, learning_rate=0.05, random_state=0)
+    m_level = HistGradientBoostingRegressor(**kw).fit(train[FEATURES], train["target"])
+    m_delta = HistGradientBoostingRegressor(**kw).fit(
+        train[FEATURES], train["target"] - train["pm_today"])
     overall = train["target"].mean()
     month_mean = train.groupby("month")["target"].mean()
     return {
         "mean_only": np.full(len(test), overall),
         "month_mean": test["month"].map(month_mean).fillna(overall).to_numpy(),
         "persistence": test["pm_today"].to_numpy(),
-        "model": m.predict(test[FEATURES]),
+        "model_level": m_level.predict(test[FEATURES]),
+        "model_delta": test["pm_today"].to_numpy() + m_delta.predict(test[FEATURES]),
     }
 
 
@@ -78,7 +81,7 @@ rows = []
 te = t25[(t25.month <= 10) & t25.location_id.isin(shared)]
 rows.append(score("1 unseen period", te, predict_all(train_sh, te)))
 
-# 2. unseen place (5-fold, held-out stations)
+# 2. unseen place (5-fold, held-out stations; optimistic: shared dates)
 tests, preds = [], {}
 for tr_i, te_i in GroupKFold(5).split(train_all, groups=train_all["location_id"]):
     te2 = train_all.iloc[te_i]
@@ -99,3 +102,53 @@ rows.append(score("4 unseen season", te, predict_all(train_sh, te)))
 
 print("\nMean absolute error (ug/m3), predicting next-day PM2.5. Lower is better.")
 print(pd.DataFrame(rows).to_string(index=False))
+
+# ---------- diagnostics ----------
+x = d[d["month"] <= 10].copy()
+x["persist_err"] = (x["target"] - x["pm_today"]).abs()
+print("\nLevel and persistence error by year (Jan-Oct):")
+print(x.groupby("year").agg(mean_pm=("target", "mean"),
+                            median_pm=("target", "median"),
+                            persist_mae=("persist_err", "mean")).round(1))
+
+s = df.sort_values(["location_id", "date"]).copy()
+s["same"] = s.groupby("location_id")["pm25"].diff().eq(0)
+print("\nShare of days repeating the previous value exactly:")
+print(s.groupby(s["date"].dt.year)["same"].mean().round(3))
+
+# ---------- autocorrelation by year ----------
+print("\nCorrelation of today's PM2.5 with tomorrow's, by year (Jan-Oct):")
+for yr, g in x.groupby("year"):
+    print(yr, round(g["pm_today"].corr(g["target"]), 3))
+
+# ---------- ablation: absolute-error loss, delta target ----------
+def mae(y, p):
+    return round(float(np.mean(np.abs(np.asarray(y) - np.asarray(p)))), 1)
+
+def fit_delta(train, test, feats):
+    m = HistGradientBoostingRegressor(loss="absolute_error", max_iter=300,
+                                      learning_rate=0.05, random_state=0)
+    m.fit(train[feats], train["target"] - train["pm_today"])
+    return test["pm_today"].to_numpy() + m.predict(test[feats])
+
+exps = {
+    "1 period": (train_sh, t25[(t25.month <= 10) & t25.location_id.isin(shared)]),
+    "3 place+period": (train_all, t25[(t25.month <= 10) & t25.location_id.isin(new25)]),
+    "4 season": (train_sh, t25[(t25.month == 11) & t25.location_id.isin(shared)]),
+}
+HIST = ["pm_today", "pm_lag1", "pm_mean7"]
+SEAS = ["doy_sin", "doy_cos"]
+WX = wx_cols
+WXN = [c + "_next" for c in wx_cols]
+sets = {
+    "history": HIST,
+    "history+season": HIST + SEAS,
+    "history+weather": HIST + WX,
+    "history+weather+forecast": HIST + WX + WXN,
+    "all (+lat/lon)": HIST + SEAS + WX + WXN + ["lat", "lon"],
+}
+out = {"persistence": {k: mae(te["target"], te["pm_today"]) for k, (tr, te) in exps.items()}}
+for name, feats in sets.items():
+    out[name] = {k: mae(te["target"], fit_delta(tr, te, feats)) for k, (tr, te) in exps.items()}
+print("\nAblation (MAE, ug/m3; delta target, absolute-error loss):")
+print(pd.DataFrame(out).T.to_string())

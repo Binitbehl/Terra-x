@@ -41,3 +41,18 @@
 - Citywide median is not comparable across years; track n_sensors.
 - Cause unknown (data gap vs ingestion/sensor-ID change).
 - Design consequence: period-shift test 2022 -> 2025, restricted to Jan-Oct.
+
+## Finding 6: Generalization baselines for next-day PM2.5 (Delhi)
+- Setup: gradient-boosted trees trained on Jan-Oct 2022; features are today's PM2.5, weather (one point for all Delhi), season, lat/lon. Metric: MAE (ug/m3).
+- Persistence ("tomorrow = today") is strong: 17.7 vs 34.1 for a seasonal average on unseen period.
+- Model (level) vs persistence: unseen period 20.8 vs 17.7; place + period 18.3 vs 16.0; unseen season (Nov 2025) 49.0 vs 39.6. The model loses whenever time is held out.
+- Unseen place (station hold-out) is the only win, 21.2 vs 29.2, but it is optimistic: held-out stations share dates and weather with training stations.
+- Delta target (predict change from today) helps in every test (19.8, 17.5, 44.0) but still does not beat persistence.
+- Limitations: one weather point, perfect next-day weather assumed, one training year, no confidence intervals, no 2023-2024 data.
+- Next: absolute-error loss, feature ablation, longer horizons, stations without history.
+
+## Finding 7: Why the model loses to persistence across years
+- Stale-value share <= 1% in all years: not a data artefact.
+- Persistence MAE 29.2 (2022) vs 17.3 (2025), levels 86.6 vs 61.2: 2022 is higher and noisier.
+- Delta target improves over level target in all experiments but does not beat persistence.
+- Next: absolute-error loss and feature ablation; one-day horizon may simply favour persistence.
