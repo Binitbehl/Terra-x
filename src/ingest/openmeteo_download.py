@@ -4,8 +4,8 @@ import pandas as pd
 
 # Central Delhi point; change dates here if needed
 LAT, LON = 28.61, 77.21
-START, END = "2025-10-01", "2025-11-29"
-OUTPUT = "data/processed/weather_daily_delhi.csv"
+START, END = "2022-01-01", "2025-11-29"
+OUTPUT = "data/processed/weather_daily_delhi_2022_2025.csv"
 
 params = {
     "latitude": LAT,
