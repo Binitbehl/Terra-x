@@ -71,3 +71,11 @@
 - Caveats: target-day weather is actual weather (upper bound); bootstrap ignores
   day-to-day correlation so intervals are likely narrow; six comparisons, no correction;
   MAE columns are station-day averages while intervals are day-averaged.
+
+  ## Finding 9: Seasonality and spatial pattern (OpenAQ, DuckDB)
+- Strong, repeatable seasonal cycle each year: winter peak (150-250 ug/m3), monsoon low (30-40).
+- All-year correlations with weather (temp -0.55 to -0.72, wind -0.27 to -0.44) are dominated by seasonality.
+- Highest Oct-Nov 2025 mean PM2.5: north/northwest Delhi (Bawana, Wazirpur, Jahangirpuri, Rohini, Mundka, Ashok Vihar) and Anand Vihar/Loni, 190-220 ug/m3.
+- Top-ranked GK1 (Oberoi Terrace, 46 days, no agency label) may be a low-cost sensor; unverified.
+- Differences between ranks 2-10 are small vs day-to-day variability; ranking has uncertainty.
+- 2025 lower than 2022 in Feb-Sep on all stations, but station mix differs; see same-station comparison.
