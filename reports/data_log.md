@@ -105,12 +105,13 @@
 - ~80% of the Oct-Nov station-to-station spread is unexplained.
 - Caveats: n~50, no CIs, single k-means region split, one year, 1 km buffer, sensor differences between stations.
 
-## Finding 13: Where station predictions are uncertain (neighbour-based leave-one-out, Oct-Nov 2025)
-- Median absolute error of predicting a station from its 4 nearest stations: 21.6 ug/m3; a few stations miss by 50-90.
+# Finding 13: Where station predictions are uncertain (neighbour-based leave-one-out, Oct-Nov 2025)
+- Median absolute error of predicting a station from its 4 nearest stations: 20.2 ug/m3 (n=50, GK1 excluded; 21.6 with GK1); a few stations miss by 50-90.
 - Largest errors are at the edge of the region (Faridabad Sector 30 -93.5, Teri Gram -72.1, NISE Gwal Pahari +60.6), where neighbours are far away and Delhi stations are used to extrapolate.
-- Four of six strongest negative residuals are CPCB-labelled stations (DTU, IHBAS, NSIT, Shadipur). Possible network/instrument/siting effect; confounded with location; agency-level check pending.
-- GK1 (Oberoi Terrace) is +66.9 above its neighbours; 46 days, no agency label, may be a low-cost sensor (unverified).
-- Implication: spatial uncertainty is larger at the periphery and where stations are sparse; measurement differences between networks may contribute.
+- Four of six strongest negative residuals are CPCB-labelled stations (DTU -83.5, IHBAS -83.3, NSIT -55.8, Shadipur -46.6). Possible network/instrument/siting effect; confounded with location.
 - Residual by agency (n=50, GK1 excluded): CPCB -41.4 (n=6), DPCC +17.0 (n=24), HSPCB -39.0 (n=5, edge extrapolation), IMD +7.1 (n=8), UPPCB +14.1 (n=3).
-- CPCB-vs-DPCC gap (58 ug/m3) is large but confounded with location and based on 6 stations. Co-located pairs needed to separate network effects.
-- Possible duplicate station listings (same site, different IDs) may leak information in leave-one-station-out tests; being checked.
+- CPCB-vs-DPCC gap (~58 ug/m3) is large but confounded with location and based on 6 stations.
+- Co-located IMD and DPCC monitors at Pusa agree closely (276 days, mean difference -1.9 ug/m3, r=0.97), so the CPCB gap is more likely siting/location than instrument bias (hypothesis; no co-located CPCB pair available).
+- GK1 (Oberoi Terrace) is +66.9 above its neighbours (235.8 vs 168.9); 46 days, no agency label, may be a low-cost sensor (unverified).
+- Six site names appear under two IDs (Anand Vihar, ITO, Lodhi Road, Punjabi Bagh, Pusa, R K Puram); only Pusa overlaps in time at the same location. Possible relabelled stations may leak information in leave-one-station-out tests; being checked.
+- Implication: spatial uncertainty is larger at the periphery and where stations are sparse; measurement differences between networks may contribute.

@@ -23,3 +23,13 @@ SELECT split_part(a.name, ',', 1) AS site, COUNT(DISTINCT a.location_id) AS list
 FROM stations a
 GROUP BY site HAVING COUNT(DISTINCT a.location_id) > 1
 ORDER BY listings DESC, site;
+
+-- 10. Listings that share a site name: coordinates and active period
+SELECT split_part(s.name, ',', 1) AS site, s.location_id, s.name,
+       ROUND(s.lat, 4) AS lat, ROUND(s.lon, 4) AS lon,
+       MIN(o.date) AS first_day, MAX(o.date) AS last_day, COUNT(*) AS days
+FROM stations s JOIN station_obs o ON o.location_id = s.location_id
+WHERE split_part(s.name, ',', 1) IN
+      (SELECT split_part(name, ',', 1) FROM stations GROUP BY 1 HAVING COUNT(*) > 1)
+GROUP BY site, s.location_id, s.name, s.lat, s.lon
+ORDER BY site, first_day;
