@@ -81,3 +81,18 @@
 - Highest Oct-Nov 2025 means: north/northwest Delhi (Bawana, Wazirpur, Jahangirpuri, Rohini, Mundka, Ashok Vihar) and Anand Vihar, Loni, 190-220 ug/m3.
 - GK1 (Oberoi Terrace, 46 days, no agency label) ranks first at 235.8; may be a low-cost sensor, unverified.
 - Rank differences among the top ten are small vs day-to-day variability.
+
+## Finding 10: Station features, urban heat and pollution (58 stations, Earth Engine)
+- Features per station (1 km buffer): ESA WorldCover fractions, MODIS NDVI and daytime LST, GHSL population, SRTM elevation.
+- Summer LST: tree cover -0.78 (Spearman), crop +0.50, NDVI -0.50, built-up +0.29, pop density +0.01. Most built-up third only +0.68 C warmer than least built-up third (winter +0.59 C).
+- Vegetation, not built-up area, is the main control on daytime LST. Weak UHI likely due to no rural reference, 1 km pixels shared by stations, clear-sky daytime-only MODIS. Night LST not yet tested.
+- Regression of LST on land use (R2 0.31) unstable: collinear predictors, standardised coefficient >1 for NDVI.
+- Station mean PM2.5 correlates most consistently with population density (+0.42 Oct-Nov, +0.39 Feb-Sep); built-up +0.23/+0.33, NDVI -0.24/-0.32.
+- Caveats: n=43-51 stations, spatial autocorrelation, 16 correlations tested without correction.                                                                                
+
+## Finding 11: Can static features predict station mean PM2.5 at unseen stations? (Ridge, cross-validated)
+- Oct-Nov 2025 (n=51, std of station means 39.5 ug/m3): leave-one-station-out MAE 29.4 vs mean baseline 32.2 (+9%); held-out regions 36.1 vs 34.5 (-5%).
+- Feb-Sep 2025 (n=43, std 9.8): leave-one-out 7.4 vs 7.6 (+2%); held-out regions 7.9 vs 7.8 (-2%).
+- Conclusion: built-up fraction, vegetation, land surface temperature, population density and elevation (1 km) give no detectable improvement over the average of other stations when whole regions are held out.
+- Correlations of ~0.3-0.4 (Finding 10) are too weak to predict at n~50.
+- Limitations: one year of station means; small n; correlated predictors; sensor/calibration differences; spatial autocorrelation; one buffer size (1 km).
