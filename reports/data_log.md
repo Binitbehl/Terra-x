@@ -96,3 +96,11 @@
 - Conclusion: built-up fraction, vegetation, land surface temperature, population density and elevation (1 km) give no detectable improvement over the average of other stations when whole regions are held out.
 - Correlations of ~0.3-0.4 (Finding 10) are too weak to predict at n~50.
 - Limitations: one year of station means; small n; correlated predictors; sensor/calibration differences; spatial autocorrelation; one buffer size (1 km).
+
+## Finding 12: Location vs land-use features for station mean PM2.5 (ridge / 4-nearest stations)
+- Oct-Nov 2025 (n=51): leave-one-out gains over the mean baseline: static features +9%, location only +6%, features + location +18%. Held-out regions: -5%, +9%, +9%.
+- Feb-Sep 2025 (n=43, small spread): location only +6% in both tests; features add nothing.
+- Location predicts better than land-use features and generalises across held-out regions (modest +6 to +9%), pointing to a broad regional gradient.
+- Land-use features help only when neighbours are available (+18% leave-one-out), not when regions are held out.
+- ~80% of the Oct-Nov station-to-station spread is unexplained.
+- Caveats: n~50, no CIs, single k-means region split, one year, 1 km buffer, sensor differences between stations.
