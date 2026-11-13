@@ -3,7 +3,7 @@ import pandas as pd
 from sklearn.ensemble import HistGradientBoostingRegressor
 
 # ---------- load ----------
-df = pd.read_csv("data/raw/openaq_pm25_2022_2025.csv", parse_dates=["date"])
+df = pd.read_csv("data/processed/pm25_dedup.csv", parse_dates=["date"])
 df = df[(df["pm25"] >= 0) & (df["pm25"] <= 1000)]
 
 wide = df.pivot_table(index="date", columns="location_id", values="pm25", aggfunc="mean")

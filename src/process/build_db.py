@@ -6,7 +6,7 @@ con.execute("""
 CREATE OR REPLACE TABLE station_obs AS
 SELECT location_id, name, lat, lon, sensor_id,
        CAST(date AS DATE) AS date, pm25
-FROM read_csv_auto('data/raw/openaq_pm25_2022_2025.csv')
+FROM read_csv_auto('data/processed/pm25_dedup.csv')
 WHERE pm25 BETWEEN 0 AND 1000
 """)
 

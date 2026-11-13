@@ -4,7 +4,7 @@ from sklearn.ensemble import HistGradientBoostingRegressor
 from sklearn.model_selection import GroupKFold
 
 # ---------- load ----------
-df = pd.read_csv("data/raw/openaq_pm25_2022_2025.csv", parse_dates=["date"])
+df = pd.read_csv("data/processed/pm25_dedup.csv", parse_dates=["date"])
 df = df[(df["pm25"] >= 0) & (df["pm25"] <= 1000)]
 coords = df.groupby("location_id")[["lat", "lon"]].first().reset_index()
 

@@ -33,3 +33,22 @@ WHERE split_part(s.name, ',', 1) IN
       (SELECT split_part(name, ',', 1) FROM stations GROUP BY 1 HAVING COUNT(*) > 1)
 GROUP BY site, s.location_id, s.name, s.lat, s.lon
 ORDER BY site, first_day;
+
+-- 11. Possible relabelled stations: last seen before 2023, first seen from 2025, within 300 m
+WITH span AS (
+  SELECT location_id, MIN(date) AS first_day, MAX(date) AS last_day
+  FROM station_obs GROUP BY location_id
+),
+cand AS (
+  SELECT a.location_id AS old_id, a.name AS old_name, sa.last_day AS old_last,
+         b.location_id AS new_id, b.name AS new_name, sb.first_day AS new_first,
+         sqrt(power((a.lat - b.lat) * 111.0, 2)
+            + power((a.lon - b.lon) * 111.0 * cos(radians(28.6)), 2)) * 1000 AS dist_m
+  FROM stations a
+  JOIN span sa ON sa.location_id = a.location_id
+  JOIN stations b ON b.location_id <> a.location_id
+  JOIN span sb ON sb.location_id = b.location_id
+  WHERE sa.last_day < DATE '2023-01-01' AND sb.first_day >= DATE '2025-01-01'
+)
+SELECT old_id, old_name, old_last, new_id, new_name, new_first, ROUND(dist_m) AS dist_m
+FROM cand WHERE dist_m < 300 ORDER BY dist_m;
