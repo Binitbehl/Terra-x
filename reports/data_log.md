@@ -111,3 +111,6 @@
 - Four of six strongest negative residuals are CPCB-labelled stations (DTU, IHBAS, NSIT, Shadipur). Possible network/instrument/siting effect; confounded with location; agency-level check pending.
 - GK1 (Oberoi Terrace) is +66.9 above its neighbours; 46 days, no agency label, may be a low-cost sensor (unverified).
 - Implication: spatial uncertainty is larger at the periphery and where stations are sparse; measurement differences between networks may contribute.
+- Residual by agency (n=50, GK1 excluded): CPCB -41.4 (n=6), DPCC +17.0 (n=24), HSPCB -39.0 (n=5, edge extrapolation), IMD +7.1 (n=8), UPPCB +14.1 (n=3).
+- CPCB-vs-DPCC gap (58 ug/m3) is large but confounded with location and based on 6 stations. Co-located pairs needed to separate network effects.
+- Possible duplicate station listings (same site, different IDs) may leak information in leave-one-station-out tests; being checked.
