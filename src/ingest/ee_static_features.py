@@ -34,7 +34,7 @@ def run(name, image, reducer, scale, rename=None):
 parts = []
 
 # Land cover fractions (ESA WorldCover 10 m, 2021)
-wc = ee.Image("ESA/WorldCover/v200").select("Map")
+wc = ee.ImageCollection("ESA/WorldCover/v200").first().select("Map")
 lc = ee.Image.cat([
     wc.eq(50).rename("built_frac"), wc.eq(10).rename("tree_frac"),
     wc.eq(40).rename("crop_frac"), wc.eq(30).rename("grass_frac"),
