@@ -145,3 +145,15 @@
 - Verify GK1 sensor type; rerun station tests with and without it.
 - Night-time LST and a regional grid for a proper urban heat island map.
 - ERA5 multi-year boundary layer height (requests queued) to test BLH in the forecasting model.
+
+## Finding 15: Prediction intervals, calibration and coverage (90% intervals, quantile GBM + conformal)
+- Setup: delta-target gradient boosting with 5/50/95% quantile loss, trained on half of 2022 Jan-Oct weeks; conformalised quantile regression calibrated on another quarter of 2022 weeks; tested on remaining 2022 weeks and on 2025 (de-duplicated stations).
+- Raw quantile intervals are overconfident: 90% nominal gives 0.62-0.83 coverage, even without shift (0.71 at 1 day, 0.62 at 3 days on other 2022 weeks).
+- Conformal calibration on 2022 gives 0.93-0.96 coverage on 2025 Jan-Oct (shared and new stations, 1 and 3 days), slightly conservative because 2022 was noisier than 2025.
+- Under season shift (Nov 2025) coverage fails: 0.80 (1 day), 0.77 (3 days); persistence band 0.83 / 0.82; raw 0.72 / 0.69.
+- Without shift, conformal coverage is slightly below nominal (0.87, 0.83), with ~10 effective calibration weeks and autocorrelated days.
+- Intervals are wide: ~90 ug/m3 at 1 day, ~125 at 3 days (vs MAE 14-25). Conformal model intervals are 10-22% narrower than the persistence band at slightly lower coverage.
+- Coverage by distance from central Delhi is uniform at 1 day (0.94 inner, 0.93 middle, 0.93 outer; 19/21/10 stations) and 3 days (0.95, 0.95, 0.93). No regional undercoverage found, unlike station-mean prediction (Finding 13).
+- Coverage by period: 1 day Apr-Sep 0.96, Jan-Mar 0.92, Oct 0.85; 3 days 0.96, 0.91, 0.91. Fixed-width correction is too wide in clean months and too narrow in smog onset: error scale rises with pollution level.
+- Median-forecast MAE vs persistence: shared stations 17.8 vs 17.8 (1 day), 22.6 vs 24.6 (3 days); new stations worse (15.5 vs 14.1; 21.4 vs 19.5); Nov 2025 worse (49.4 vs 40.1; 71.2 vs 61.0).
+- Caveats: one calibration split, ~10 effective calibration weeks, outer zone has 10 stations, conformal guarantee assumes exchangeability (violated by seasonal shift), weather features use actual target-day weather.
