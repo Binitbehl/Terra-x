@@ -12,7 +12,7 @@ pm = con.execute("""SELECT location_id, AVG(pm25) AS pm25_mean FROM station_obs
     WHERE date BETWEEN '2025-10-01' AND '2025-11-29'
     GROUP BY location_id HAVING COUNT(*) >= 45""").df()
 d = feat[["location_id", "name", "lat", "lon"]].merge(pm, on="location_id").reset_index(drop=True)
-
+d = d[~d["name"].str.startswith("GK1")].reset_index(drop=True)
 coords = np.column_stack([d["lon"] * np.cos(np.radians(28.6)), d["lat"]])
 d["pred_loo"] = cross_val_predict(KNeighborsRegressor(4, weights="distance"),
                                   coords, d["pm25_mean"], cv=LeaveOneOut())
@@ -45,3 +45,7 @@ print("\nStations least predictable from their neighbours:")
 print(d.reindex(d["resid"].abs().sort_values(ascending=False).index)
         .head(10)[["name", "pm25_mean", "pred_loo", "resid"]].round(1).to_string(index=False))
 print("\nMedian absolute residual:", round(float(d["resid"].abs().median()), 1), "ug/m3")
+d["agency"] = d["name"].str.extract(r"-\s*([A-Za-z]+)\s*$")[0].fillna("none/other")
+print("\nResidual by agency label (observed minus neighbour prediction):")
+print(d.groupby("agency")["resid"].agg(n="size", mean_resid="mean",
+                                       median_resid="median").round(1).to_string())

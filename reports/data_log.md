@@ -104,3 +104,10 @@
 - Land-use features help only when neighbours are available (+18% leave-one-out), not when regions are held out.
 - ~80% of the Oct-Nov station-to-station spread is unexplained.
 - Caveats: n~50, no CIs, single k-means region split, one year, 1 km buffer, sensor differences between stations.
+
+## Finding 13: Where station predictions are uncertain (neighbour-based leave-one-out, Oct-Nov 2025)
+- Median absolute error of predicting a station from its 4 nearest stations: 21.6 ug/m3; a few stations miss by 50-90.
+- Largest errors are at the edge of the region (Faridabad Sector 30 -93.5, Teri Gram -72.1, NISE Gwal Pahari +60.6), where neighbours are far away and Delhi stations are used to extrapolate.
+- Four of six strongest negative residuals are CPCB-labelled stations (DTU, IHBAS, NSIT, Shadipur). Possible network/instrument/siting effect; confounded with location; agency-level check pending.
+- GK1 (Oberoi Terrace) is +66.9 above its neighbours; 46 days, no agency label, may be a low-cost sensor (unverified).
+- Implication: spatial uncertainty is larger at the periphery and where stations are sparse; measurement differences between networks may contribute.
