@@ -182,3 +182,11 @@
 - Only reliable gain: history+weather vs persistence in the unseen-period test (-1.21 at 1 day, -3.56 at 3 days).
 - Caveat: Experiment 2 shares dates between train and test stations, so models can learn the day's citywide anomaly; its large gain over persistence (11-21) is not pure spatial generalisation.
 - Caveats: day-level bootstrap ignores week-level autocorrelation; November is a single month; 1 km buffer on ~5 km pixels.
+
+## Finding 19: Robustness of satellite-based forecasts to missing satellite data (1-day horizon)
+- Random masking of satellite inputs at test time (0/25/50/75/100%), model trained on real data: unseen period 16.7 -> 16.6 (no sensitivity); place+period 14.1 -> 14.4; unseen season (Nov 2025) 44.0 -> 47.1 -> 50.1 -> 53.3 -> 56.8.
+- Fully masked, the Nov model is 13.6 worse than a model trained without satellite (56.8 vs 43.2) and 16.7 worse than persistence (40.1).
+- Robustness in normal conditions reflects that the model barely uses satellite (Finding 18); under season shift it becomes fragile.
+- Missingness is informative: mean next-day PM2.5 is 76.7 on days with day-LST vs 47.8 on days without (unseen-period test).
+- Real cloud pattern, Nov: satellite model vs history+weather is 47.3 vs 44.4 on missing-LST days, 41.8 vs 42.5 on present days; persistence is best on both (39.4, 40.6). Unseen period: differences about 0.4 in opposite directions.
+- Caveats: one month for Nov; independent per-variable masking; 5 draws; no bootstrap CIs in this test.
