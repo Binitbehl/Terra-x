@@ -157,3 +157,12 @@
 - Coverage by period: 1 day Apr-Sep 0.96, Jan-Mar 0.92, Oct 0.85; 3 days 0.96, 0.91, 0.91. Fixed-width correction is too wide in clean months and too narrow in smog onset: error scale rises with pollution level.
 - Median-forecast MAE vs persistence: shared stations 17.8 vs 17.8 (1 day), 22.6 vs 24.6 (3 days); new stations worse (15.5 vs 14.1; 21.4 vs 19.5); Nov 2025 worse (49.4 vs 40.1; 71.2 vs 61.0).
 - Caveats: one calibration split, ~10 effective calibration weeks, outer zone has 10 stations, conformal guarantee assumes exchangeability (violated by seasonal shift), weather features use actual target-day weather.
+
+## Finding 16: Scale-adaptive conformal intervals (correction proportional to recent PM2.5 level)
+- Method: same quantile models and splits as Finding 15; conformal correction scaled by the station's 7-day mean PM2.5 (floor 20 ug/m3). Fitted correction: 0.17 x level (1 day), 0.25 x level (3 days), vs fixed 12.8 and 19.5 ug/m3.
+- Coverage by recent level, 1 day (fixed -> scaled): <50: 0.97 -> 0.92 (width 66 -> 52); 50-100: 0.93 -> 0.92; 100-200: 0.77 -> 0.84; >200: 0.84 -> 0.93 (width 195 -> 256). 3 days: 0.98 -> 0.89, 0.92 -> 0.92, 0.79 -> 0.87, 0.88 -> 0.95.
+- Coverage by season, 1 day: Apr-Sep 0.96 -> 0.92 (width 83 -> 74); Oct 0.85 -> 0.87; Nov 0.80 -> 0.88. 3 days: Apr-Sep 0.96 -> 0.91; Oct 0.91 -> 0.90; Nov 0.78 -> 0.86.
+- Interval score improves 3-7% in all test sets (e.g. shared stations 2025 Jan-Oct, 1 day: 121.6 -> 115.9; Nov 3 days: 431.5 -> 402.2).
+- Nov 2025 (season shift) still under-covers (0.87 at 1 day, 0.85 at 3 days) with intervals ~205-260 ug/m3 wide: not decision-useful.
+- Residual issues: 100-200 ug/m3 band still under-covered (0.84, 0.87); top band slightly over-covered; 2022 no-shift coverage still below 0.90 (0.876, 0.844).
+- Caveats: one calibration split (~10 effective weeks), days are autocorrelated so coverage estimates have wider error than row counts suggest, no confidence intervals on coverage.
