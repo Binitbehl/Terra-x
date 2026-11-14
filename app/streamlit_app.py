@@ -20,17 +20,18 @@ dmin, dmax = pm["date"].min().date(), pm["date"].max().date()
 
 st.title("TERRA-X: Delhi PM2.5 explorer")
 st.caption("Daily PM2.5 from OpenAQ ground stations. Research prototype, not for health decisions.")
-
+st.caption("Made by Binit Behl")
 with st.sidebar:
     st.header("Filters")
     start, end = st.date_input("Date range", value=(pd.Timestamp("2025-10-01").date(), dmax),
                                min_value=dmin, max_value=dmax)
     min_days = st.slider("Minimum days per station", 1, 60, 15)
-    vmax = st.slider("Colour scale max (ug/m3)", 50, 300, 200, step=10)
+    vmax = st.slider("Colour scale max (ug/m3)", 50, 300, 250, step=10)
 
 sub = pm[(pm["date"] >= pd.Timestamp(start)) & (pm["date"] <= pd.Timestamp(end))]
 tab_map, tab_ts, tab_cov, tab_find = st.tabs(["Map", "Time series", "Coverage", "Findings"])
 
+# ---------- map ----------
 # ---------- map ----------
 with tab_map:
     g = (sub.groupby("location_id")
@@ -49,8 +50,13 @@ with tab_map:
                           get_fill_color="color", get_radius=900, pickable=True,
                           stroked=True, get_line_color=[60, 60, 60], line_width_min_pixels=1)
         view = pdk.ViewState(latitude=float(g["lat"].mean()), longitude=float(g["lon"].mean()), zoom=9.3)
-        st.pydeck_chart(pdk.Deck(layers=[layer], initial_view_state=view,
+        st.pydeck_chart(pdk.Deck(layers=[layer], initial_view_state=view, map_style="light",
                                  tooltip={"text": "{name}\nMean PM2.5: {mean_txt} ug/m3\nDays: {days}"}))
+        st.markdown(
+            "<div style='display:flex;align-items:center;gap:8px;font-size:13px'>0"
+            "<div style='height:10px;width:220px;background:linear-gradient("
+            "to right,rgb(255,237,160),rgb(128,0,38))'></div>"
+            f"{vmax}+ ug/m3</div>", unsafe_allow_html=True)
         c1, c2, c3 = st.columns(3)
         c1.metric("Stations shown", len(g))
         c2.metric("Mean of station means", f"{g['mean_pm25'].mean():.1f}")
@@ -58,7 +64,6 @@ with tab_map:
         st.dataframe(g.sort_values("mean_pm25", ascending=False)
                        [["name", "mean_pm25", "days"]].round(1), use_container_width=True)
         st.caption("Station means use different numbers of days; agencies and sensor types differ.")
-
 # ---------- time series ----------
 with tab_ts:
     wide = sub.pivot_table(index="date", columns="name", values="pm25", aggfunc="mean")
