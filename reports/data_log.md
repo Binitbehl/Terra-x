@@ -205,3 +205,9 @@
 - CIs and Wilcoxon p-values reflect station-to-station variation only; stations share the same weather, so each month is effectively one observation.
 - Covered months: Apr-Jul, Sep, Oct only (Jan-Mar, Aug had too few stations with 15+ days in both years).
 - Not checked: relabelled stations, sensor changes between years.
+
+## Finding 22: Persistence of station rankings across seasons (2025)
+- Spearman rank correlation of station-mean PM2.5: pre-monsoon vs monsoon 0.59 (44 stations), monsoon vs post-monsoon 0.54 (45), pre- vs post-monsoon 0.42 (47).
+- Rankings are moderately persistent but not fixed; correlation weakens as seasons differ more.
+- Winter excluded (2 stations with data).
+- Caveat: persistent sensor bias (agency, instrument type) would also produce persistent rankings; measurements, not verified exposure.
