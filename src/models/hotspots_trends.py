@@ -72,16 +72,20 @@ for sname, months in SEASONS.items():
         print(hot.head(5).to_string(index=False))
 
 print("\n=== 2) Do station rankings persist across seasons? (Spearman, 2025) ===")
-sm = pd.DataFrame(season_means).dropna()
-print(f"{len(sm)} stations present in all seasons")
+sm = pd.DataFrame(season_means)
+print("stations per season:", sm.notna().sum().to_dict())
+print("(pairwise: only stations present in both seasons; winter dropped, too few stations)")
+sm = sm.drop(columns=["winter (Jan-Feb)"])
 print(sm.corr(method="spearman").round(2).to_string())
+print("stations in each pair:")
+print(sm.notna().astype(int).T.dot(sm.notna().astype(int)).to_string())
 
 print("\n=== 3) Year-on-year comparison, shared stations (>= 15 days in the month both years) ===")
 rows = []
 for m in range(1, 11):
     a = pm[(pm.year == 2022) & (pm.month == m)].groupby("location_id")["pm25"].agg(["mean", "count"])
     b = pm[(pm.year == 2025) & (pm.month == m)].groupby("location_id")["pm25"].agg(["mean", "count"])
-    j = a.join(b, lsuffix="22", rsuffix="25", how="inner")
+    j = a.join(b, suffixes=("22", "25"), how="inner")
     j = j[(j["count22"] >= 15) & (j["count25"] >= 15)]
     if len(j) < 6:
         continue

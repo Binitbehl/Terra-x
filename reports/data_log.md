@@ -190,3 +190,18 @@
 - Missingness is informative: mean next-day PM2.5 is 76.7 on days with day-LST vs 47.8 on days without (unseen-period test).
 - Real cloud pattern, Nov: satellite model vs history+weather is 47.3 vs 44.4 on missing-LST days, 41.8 vs 42.5 on present days; persistence is best on both (39.4, 40.6). Unseen period: differences about 0.4 in opposite directions.
 - Caveats: one month for Nov; independent per-variable masking; 5 draws; no bootstrap CIs in this test.
+
+## Finding 20: Spatial clustering and hotspots (2025, 5 nearest neighbours)
+- Moran's I: pre-monsoon 0.08 (p=0.099), monsoon 0.04 (p=0.203), post-monsoon Oct-Nov 0.12 (p=0.037). Clustering is weak; only post-monsoon is significant at 5%, and not after correcting for 4 seasons.
+- Winter (Jan-Feb) cannot be assessed: only 2 stations have >=15 days (coverage gap).
+- Station means: pre-monsoon 41-123, monsoon 24-60, post-monsoon 54-248 ug/m3; spatial differences are largest in the smog season.
+- Post-monsoon hot spots (Gi*, z > 1.96): Burari (182), DTU (128), Wazirpur (216), Ashok Vihar (196), Rohini (206): a north/north-west Delhi cluster.
+- Gi* flags neighbourhoods: e.g. DTU (50.8) in pre-monsoon and Burari (33.8) in monsoon are below their season means but have high neighbours.
+- Caveats: station means use different numbers of days; agencies and sensor types differ.
+
+## Finding 21: Year-on-year comparison, 2022 vs 2025, shared stations (>=15 days per month in both years)
+- Median station change: Apr -35.6 [-40.0, -22.0], May -13.1, Jun -7.9, Jul -8.0, Sep -5.0 (all lower in 2025, 25-34 of 32-38 stations); Oct +54.3 [+48.4, +61.4] (33 of 35 stations higher).
+- Sign reversal within one year -> not a trend; likely dominated by year-to-year weather, not tested.
+- CIs and Wilcoxon p-values reflect station-to-station variation only; stations share the same weather, so each month is effectively one observation.
+- Covered months: Apr-Jul, Sep, Oct only (Jan-Mar, Aug had too few stations with 15+ days in both years).
+- Not checked: relabelled stations, sensor changes between years.
