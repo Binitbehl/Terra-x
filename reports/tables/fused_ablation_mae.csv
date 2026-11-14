@@ -1,0 +1,9 @@
+horizon,experiment,n,lst_day%,no2%,persistence,hist+wx,hist+sat,hist+wx+sat,hist+wx+static,hist+wx+static+sat
+1,1 unseen period,9915,49,68,17.8,16.6,17.5,16.7,16.8,16.9
+1,3 place+period,1381,49,67,14.1,14.3,15.0,14.2,15.3,14.8
+1,4 unseen season,1193,61,86,40.1,41.9,57.6,44.2,48.4,51.0
+1,2 unseen place,6882,53,71,29.2,18.0,21.2,18.2,18.5,18.5
+3,1 unseen period,9875,49,68,24.6,21.1,23.4,21.1,21.6,21.8
+3,3 place+period,1371,50,67,19.5,20.4,19.6,20.6,21.7,21.0
+3,4 unseen season,1107,61,85,61.0,70.5,73.6,63.0,75.0,64.6
+3,2 unseen place,6516,55,72,40.9,19.9,24.2,20.3,20.6,20.7

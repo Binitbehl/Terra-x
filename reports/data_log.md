@@ -166,3 +166,10 @@
 - Nov 2025 (season shift) still under-covers (0.87 at 1 day, 0.85 at 3 days) with intervals ~205-260 ug/m3 wide: not decision-useful.
 - Residual issues: 100-200 ug/m3 band still under-covered (0.84, 0.87); top band slightly over-covered; 2022 no-shift coverage still below 0.90 (0.876, 0.844).
 - Caveats: one calibration split (~10 effective weeks), days are autocorrelated so coverage estimates have wider error than row counts suggest, no confidence intervals on coverage.
+
+## Finding 17: Daily satellite availability (MODIS LST, Sentinel-5P NO2 and aerosol index, 53 stations, Jan-Oct 2022 + Jan-Nov 2025)
+- Share of station-days with a value: day LST 52%, night LST 60%, NO2 73%, aerosol index 100%.
+- Gaps are seasonal, not random: day LST 5-17% in Jul-Aug (monsoon), 26% in Jan 2022 (smog/fog), 85-93% in Mar-Apr. Night LST is better in smog months (93% in Nov 2025).
+- Missing = cloudy or hazy = weather that also drives PM2.5, so missingness is informative.
+- Aerosol index is 100% available (not cloud-filtered); NO2 and aerosol index are ~5 km so adjacent stations may share pixels (spatial variation checked in the next step).
+- Station buffer 1 km; daily mean of overpasses; values left empty when missing (no gap filling).
