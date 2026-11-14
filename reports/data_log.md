@@ -167,9 +167,18 @@
 - Residual issues: 100-200 ug/m3 band still under-covered (0.84, 0.87); top band slightly over-covered; 2022 no-shift coverage still below 0.90 (0.876, 0.844).
 - Caveats: one calibration split (~10 effective weeks), days are autocorrelated so coverage estimates have wider error than row counts suggest, no confidence intervals on coverage.
 
-## Finding 17: Daily satellite availability (MODIS LST, Sentinel-5P NO2 and aerosol index, 53 stations, Jan-Oct 2022 + Jan-Nov 2025)
+## Finding 17: Daily satellite availability (MODIS LST, Sentinel-5P NO2 and aerosol index, 53 stations)
 - Share of station-days with a value: day LST 52%, night LST 60%, NO2 73%, aerosol index 100%.
-- Gaps are seasonal, not random: day LST 5-17% in Jul-Aug (monsoon), 26% in Jan 2022 (smog/fog), 85-93% in Mar-Apr. Night LST is better in smog months (93% in Nov 2025).
+- Gaps are seasonal, not random: day LST 5-17% in Jul-Aug, 26% in Jan 2022 (smog), 85-93% in Mar-Apr. Night LST better in smog months (93% in Nov 2025).
 - Missing = cloudy or hazy = weather that also drives PM2.5, so missingness is informative.
-- Aerosol index is 100% available (not cloud-filtered); NO2 and aerosol index are ~5 km so adjacent stations may share pixels (spatial variation checked in the next step).
-- Station buffer 1 km; daily mean of overpasses; values left empty when missing (no gap filling).
+- Spatial variation between stations (within-day std / total std): day LST 0.16, night LST 0.21, aerosol index 0.19, NO2 0.41 -> mostly a citywide time signal.
+
+## Finding 18: Adding daily satellite features to next-day PM2.5 forecasts (1 and 3 days)
+- Models: persistence, history+weather, +static, +satellite (LST day/night, NO2, aerosol index, same-day and 3-day mean), delta target, absolute-error loss.
+- Unseen period: satellite adds nothing (+0.11 [-0.34, 0.52] at 1 day; +0.06 [-0.39, 0.50] at 3 days).
+- Place+period: satellite improves the static model (-0.49, -0.68) but the result is still no better than persistence (full model +0.70 [-0.53, 1.82] at 1 day).
+- Unseen season (Nov 2025): 1 day satellite hurts (+2.3 to +2.7); 3 days it helps (-7.5, -10.4) but only back to persistence level (63.0 vs 61.0). History+satellite without weather is worst (57.6 vs 40.1).
+- 7 of 16 satellite comparisons exclude zero: 4 helpful, 3 harmful. Effects depend on context and do not generalise.
+- Only reliable gain: history+weather vs persistence in the unseen-period test (-1.21 at 1 day, -3.56 at 3 days).
+- Caveat: Experiment 2 shares dates between train and test stations, so models can learn the day's citywide anomaly; its large gain over persistence (11-21) is not pure spatial generalisation.
+- Caveats: day-level bootstrap ignores week-level autocorrelation; November is a single month; 1 km buffer on ~5 km pixels.
