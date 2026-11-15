@@ -23,8 +23,13 @@ st.caption("Daily PM2.5 from OpenAQ ground stations. Research prototype, not for
 st.caption("Made by Binit Behl")
 with st.sidebar:
     st.header("Filters")
-    start, end = st.date_input("Date range", value=(pd.Timestamp("2025-10-01").date(), dmax),
-                               min_value=dmin, max_value=dmax)
+    picked = st.date_input("Date range", value=(pd.Timestamp("2025-10-01").date(), dmax),
+                           min_value=dmin, max_value=dmax)
+    if isinstance(picked, (tuple, list)) and len(picked) == 2:
+        start, end = picked
+    else:
+        st.info("Pick an end date to finish the range.")
+        st.stop()
     min_days = st.slider("Minimum days per station", 1, 60, 15)
     vmax = st.slider("Colour scale max (ug/m3)", 50, 300, 250, step=10)
 

@@ -108,3 +108,8 @@ streamlit run app/streamlit_app.py
 ## Data licences and credits
 
 Please check and follow the terms of OpenAQ, Open-Meteo, Copernicus (ERA5, Sentinel-5P), NASA (MODIS) and Google Earth Engine before reusing the data.
+## Screenshots
+
+![Dashboard map](reports/figures/dashboard_map.png)
+![Dashboard time series](reports/figures/dashboard_timeseries.png)
+![Dashboard station table](reports/figures/dashboard_table.png)
