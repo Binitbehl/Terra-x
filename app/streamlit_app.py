@@ -92,8 +92,8 @@ with tab_cov:
 
 # ---------- findings ----------
 with tab_find:
-    if os.path.exists("reports/findings.md"):
-        st.markdown(open("reports/findings.md", encoding="utf-8").read())
+    if os.path.exists("reports/data_log.md"):
+        st.markdown(open("reports/data_log.md", encoding="utf-8").read())
     path = "reports/tables/fused_ablation_compare.csv"
     if os.path.exists(path):
         st.subheader("Satellite ablation: paired differences (negative = first model better)")

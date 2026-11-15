@@ -21,7 +21,7 @@ This is a student research project. Results are honest and several are negative.
 | Land use and heat? | Summer land-surface temperature correlates with tree cover (r = -0.78) and built-up area (r = +0.29). The urban heat island among stations is small (about +0.7 C). |
 | Year-on-year change 2022 vs 2025? | Apr-Sep lower in 2025, October much higher. This reverses sign within the year, so it is a comparison, not a trend. |
 
-All findings, with numbers and caveats, are in `reports/findings.md` (Findings 1-22).
+All findings, with numbers and caveats, are in `reports/data_log.md` (Findings 1-22).
 
 ## Limitations (read these first)
 
@@ -52,7 +52,7 @@ src/ingest/    data download (OpenAQ, Open-Meteo, ERA5, Earth Engine)
 src/process/   cleaning, de-duplication, DuckDB build, SQL runner
 src/models/    forecasting experiments, uncertainty, station analysis, hotspots
 sql/           DuckDB queries
-reports/       findings.md, figures, result tables
+reports/       data_log.md, figures, result tables
 app/           Streamlit dashboard
 ```
 
