@@ -113,3 +113,4 @@ Please check and follow the terms of OpenAQ, Open-Meteo, Copernicus (ERA5, Senti
 ![Dashboard map](reports/figures/dashboard_map.png)
 ![Dashboard time series](reports/figures/dashboard_timeseries.png)
 ![Dashboard station table](reports/figures/dashboard_table.png)
+![Hotspot map](reports/figures/station_hotspots.png)
